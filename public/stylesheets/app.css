@@ -13,3 +13,7 @@ i.icon {
 #delete {
   display: inline;
 }
+
+#date {
+  color: salmon;
+}

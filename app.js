@@ -2,7 +2,8 @@ const express = require("express"),
   app = express(),
   mongoose = require("mongoose"),
   bodyParser = require("body-parser"),
-  methodOverride = require("method-override");
+  methodOverride = require("method-override"),
+  expressSanitizer = require("express-sanitizer");
 
 //APP CONFIG
 app.set("view engine", "ejs");
@@ -13,6 +14,7 @@ app.use(
     extended: true
   })
 );
+app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 
 //MONGOOSE CONFIG
@@ -27,12 +29,6 @@ let blogSchema = new mongoose.Schema({
 });
 
 let Blog = mongoose.model("Blog", blogSchema);
-
-// Blog.create({
-//   title: "Test Blog",
-//   image: "https://images.unsplash.com/photo-1501707305551-9b2adda5e527?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=0cf5887247e17503ce4e542d00d86b9d&auto=format&fit=crop&w=500&q=60",
-//   body: "This is test blog"
-// });
 
 //RESTFUL ROUTES
 app.get("/", function (req, res) {
@@ -58,6 +54,7 @@ app.get("/blogs/new", function (req, res) {
 
 //CREATE ROUTE
 app.post("/blogs", function (req, res) {
+  req.body.blog.body = req.sanitize(req.body.blog.body);
   //create blog
   Blog.create(req.body.blog, function (err, newBlog) {
     if (err) {
@@ -97,6 +94,7 @@ app.get("/blogs/:id/edit", function (req, res) {
 
 //UPDATE ROUTE
 app.put("/blogs/:id", function (req, res) {
+  req.body.blog.body = req.sanitize(req.body.blog.body);
   Blog.findByIdAndUpdate(req.params.id, req.body.blog, function (
     err,
     updatedBlog
