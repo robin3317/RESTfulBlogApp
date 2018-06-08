@@ -9,3 +9,7 @@ i.icon {
 #index-page {
   margin-top: 5rem;
 }
+
+#delete {
+  display: inline;
+}
